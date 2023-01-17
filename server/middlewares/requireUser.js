@@ -6,7 +6,8 @@ module.exports = async (request, response, next) => {
 		!request.headers.authorization ||
 		!request.headers.authorization.startsWith("Bearer")
 	) {
-		return response.status(401).send("Authorization header is required");
+		// return response.status(401).send("Authorization header is required");
+		return response.send(error(401, "Authorization header is required"));
 	}
 
 	const accessToken = request.headers.authorization.split(" ")[1];
@@ -21,6 +22,7 @@ module.exports = async (request, response, next) => {
 		next();
 	} catch (error) {
 		console.log(error);
-		return response.status(401).send("Invalid access key");
+		// return response.status(401).send("Invalid access key");
+		return response.send(error(401, "Invalid access key"));
 	}
 };

@@ -4,12 +4,14 @@ const dbConnect = require("./dbConnect");
 const authRouter = require("./routers/authRouter");
 const postsRouter = require("./routers/postsRouter");
 const morgan = require("morgan");
+const cookieParser = require("cookie-parser");
 
 const app = express();
 
 // middlewares
 app.use(express.json());
 app.use(morgan("common"));
+app.use(cookieParser());
 
 app.use("/auth", authRouter);
 app.use("/posts", postsRouter);
