@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-
+const { error } = require("../utils/responseWrapper");
 module.exports = async (request, response, next) => {
 	if (
 		!request.headers ||
@@ -19,9 +19,10 @@ module.exports = async (request, response, next) => {
 		);
 
 		request._id = decoded._id;
+		console.log("Inside require user");
 		next();
-	} catch (error) {
-		console.log(error);
+	} catch (e) {
+		console.log(e);
 		// return response.status(401).send("Invalid access key");
 		return response.send(error(401, "Invalid access key"));
 	}

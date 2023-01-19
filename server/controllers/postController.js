@@ -1,4 +1,4 @@
-const { success } = require("./utils/responseWrapper");
+const { success } = require("../utils/responseWrapper");
 
 const getAllPostController = async (request, response) => {
 	console.log(request._id);
