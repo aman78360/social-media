@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const User = require("../models/User");
 const { error } = require("../utils/responseWrapper");
 module.exports = async (request, response, next) => {
 	if (
@@ -19,6 +20,13 @@ module.exports = async (request, response, next) => {
 		);
 
 		request._id = decoded._id;
+
+		const user = await User.findById(request._id);
+
+		if (!user) {
+			return response.send(error(404, "User not found"));
+		}
+
 		console.log("Inside require user");
 		next();
 	} catch (e) {
