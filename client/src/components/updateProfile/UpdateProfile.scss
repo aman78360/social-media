@@ -9,10 +9,29 @@
 		flex: 1;
 		text-align: center;
 
-		.user-image {
-			width: 80px;
-			height: 80px;
-			border-radius: 50%;
+		.input-user-image {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+
+			.labelImage {
+				width: 80px;
+				height: 80px;
+				border-radius: 50%;
+				border: 2px dashed var(--accent-color);
+				cursor: pointer;
+
+				img {
+					width: 100%;
+					height: 100%;
+					border-radius: 50%;
+					object-fit: cover;
+				}
+			}
+
+			.inputImage {
+				display: none;
+			}
 		}
 	}
 	.right-part {

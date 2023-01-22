@@ -1,7 +1,14 @@
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { Outlet } from "react-router-dom";
 import NavBar from "../../components/navbar/NavBar";
+import { getMyInfo } from "../../redux/slices/appConfigSlice";
 
 function Home() {
+	const dispatch = useDispatch();
+	useEffect(() => {
+		dispatch(getMyInfo());
+	}, [dispatch]);
 	return (
 		<div>
 			<NavBar />

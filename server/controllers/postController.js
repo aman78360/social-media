@@ -1,20 +1,29 @@
 const { success, error } = require("../utils/responseWrapper");
 const Post = require("../models/Post");
 const User = require("../models/User");
+const cloudinary = require("cloudinary").v2;
 
 const createPostController = async (request, response) => {
 	try {
-		const { caption } = request.body;
+		const { caption, postImage } = request.body;
 		const owner = request._id;
 
-		if (!caption) {
+		if (!caption || !postImage) {
 			response.send(error(400, "Caption is required"));
 		}
+
+		const cloudImage = await cloudinary.uploader.upload(postImage, {
+			folder: "postImage",
+		});
 
 		const user = await User.findById(request._id);
 		const post = await Post.create({
 			owner,
 			caption,
+			image: {
+				publicId: cloudImage.publicId,
+				url: cloudImage.url,
+			},
 		});
 
 		user.posts.push(post._id);

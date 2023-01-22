@@ -26,17 +26,6 @@ axiosClient.interceptors.response.use(async (response) => {
 	const statusCode = data.statusCode;
 	const error = data.error;
 
-	if (
-		//when refresh token expires, send user to login page
-		statusCode === 401 &&
-		orignalRequest.url ===
-			`${process.env.REACT_APP_SERVER_BASE_URL}/auth/refresh`
-	) {
-		removeItem(KEY_ACCESS_TOKEN);
-		window.location.replace("/login", "_self");
-		return Promise.reject(error);
-	}
-
 	if (statusCode === 401 && !orignalRequest._retry) {
 		//means access token has expired
 		orignalRequest._retry = true;

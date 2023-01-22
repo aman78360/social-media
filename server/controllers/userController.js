@@ -1,6 +1,9 @@
+const { json } = require("express");
 const User = require("../models/User");
 const Post = require("../models/Post");
 const { error, success } = require("../utils/responseWrapper");
+const { mapPostOutput } = require("../utils/Utils");
+const cloudinary = require("cloudinary").v2;
 
 const followAndUnfollowUserController = async (request, response) => {
 	try {
@@ -139,10 +142,73 @@ const deleteMyProfileController = async (request, response) => {
 	}
 };
 
+const getMyInfoController = async (request, response) => {
+	try {
+		const user = await User.findById(request._id);
+
+		return response.send(success(200, { user }));
+	} catch (e) {
+		return response.send(error(500, e.message));
+	}
+};
+
+const updateUserProfileController = async (request, response) => {
+	try {
+		const { name, bio, userImage } = request.body;
+		const user = await User.findById(request._id);
+		if (name) {
+			user.name = name;
+		}
+
+		if (bio) {
+			user.bio = bio;
+		}
+
+		if (userImage) {
+			const cloudImage = await cloudinary.uploader.upload(userImage, {
+				folder: "profileImage",
+			});
+			user.avatar = {
+				url: cloudImage.secure_url,
+				publicId: cloudImage.public_id,
+			};
+		}
+		await user.save();
+		return response.send(success(200, { user }));
+	} catch (e) {
+		console.log(e);
+		return response.send(error(500, e.message));
+	}
+};
+
+const getUserProfileController = async (request, response) => {
+	try {
+		const userId = request.body.userId;
+		const user = await User.findById(userId).populate({
+			path: "posts",
+			populate: {
+				path: "owner",
+			},
+		});
+
+		const fullPost = user.posts;
+		const posts = fullPost
+			.map((item) => mapPostOutput(item, request._id))
+			.reverse();
+
+		return response.send(success(200, { ...user._doc, posts }));
+	} catch (e) {
+		return response.send(error(500, e.message));
+	}
+};
+
 module.exports = {
 	followAndUnfollowUserController,
 	getPostsOfFollowingController,
 	getMyPostsController,
 	getUserPostsController,
 	deleteMyProfileController,
+	getMyInfoController,
+	updateUserProfileController,
+	getUserProfileController,
 };

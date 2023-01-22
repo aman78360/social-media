@@ -11,12 +11,12 @@ function Login() {
 	async function handleSubmit(event) {
 		event.preventDefault();
 		try {
-			const result = await axiosClient.post("/auth/login", {
+			const response = await axiosClient.post("/auth/login", {
 				email,
 				password,
 			});
 
-			setItem(KEY_ACCESS_TOKEN, result.accessToken);
+			setItem(KEY_ACCESS_TOKEN, response.result.accessToken);
 			navigate("/");
 		} catch (e) {
 			console.log(e);
@@ -46,7 +46,11 @@ function Login() {
 							setPassword(event.target.value);
 						}}
 					/>
-					<button type="submit" className="submit">
+					<button
+						type="submit"
+						className="submit"
+						onClick={handleSubmit}
+					>
 						Submit
 					</button>
 				</form>

@@ -27,7 +27,6 @@ module.exports = async (request, response, next) => {
 			return response.send(error(404, "User not found"));
 		}
 
-		console.log("Inside require user");
 		next();
 	} catch (e) {
 		console.log(e);
