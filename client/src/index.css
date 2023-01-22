@@ -18,3 +18,81 @@ code {
 	font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
 		monospace;
 }
+
+:root {
+	--border-color: #ddd;
+	--accent-color: #458eff;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	color: #212121;
+}
+
+h3,
+h6 {
+	font-weight: 400;
+}
+
+p {
+	color: #555;
+	font-size: 0.9rem;
+}
+
+.hover-link {
+	cursor: pointer;
+}
+
+.hover-link:active {
+	color: red;
+}
+
+.container {
+	max-width: 960px;
+	margin-inline: auto;
+}
+
+.btn-primary {
+	width: 100%;
+	background-color: var(--accent-color);
+	border: none;
+	border-radius: 5px;
+	color: white;
+	font-weight: bold;
+	font-size: 18px;
+	padding: 10px 20px;
+	cursor: pointer;
+}
+.btn-primary:hover {
+	background-color: #287bf9;
+}
+
+.btn-primary:active {
+	background-color: var(--accent-color);
+}
+
+.btn-secondary {
+	width: 100%;
+
+	border: 2px solid var(--accent-color);
+	color: var(--accent-color);
+	font-weight: bold;
+	font-size: 15px;
+	padding: 7px 20px;
+	border-radius: 5px;
+	background: none;
+	cursor: pointer;
+}
+.btn-secondary:hover {
+	background-color: #458eff;
+	color: white;
+}
+
+.btn-secondary:active {
+	color: var(--accent-color);
+	background: none;
+}

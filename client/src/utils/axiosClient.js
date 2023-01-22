@@ -53,6 +53,10 @@ axiosClient.interceptors.response.use(async (response) => {
 			] = `Bearer ${response.result.accessToken}`;
 
 			return axios(orignalRequest);
+		} else {
+			removeItem(KEY_ACCESS_TOKEN);
+			window.location.replace("/login", "_self");
+			return Promise.reject(error);
 		}
 	}
 
