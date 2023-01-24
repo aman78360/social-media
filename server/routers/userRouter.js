@@ -7,11 +7,7 @@ router.post(
 	requireUser,
 	userController.followAndUnfollowUserController
 );
-router.get(
-	"/getPostsOfFollowing",
-	requireUser,
-	userController.getPostsOfFollowingController
-);
+router.get("/getFeedData", requireUser, userController.getFeedDataController);
 router.get("/getMyPosts", requireUser, userController.getMyPostsController);
 router.get("/getUserPosts", requireUser, userController.getUserPostsController);
 router.delete("/", requireUser, userController.deleteMyProfileController);

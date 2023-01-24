@@ -28,37 +28,52 @@ const followAndUnfollowUserController = async (request, response) => {
 
 			const followerIndex = userToFollow.followers.indexOf(curUser);
 			userToFollow.followers.splice(followerIndex, 1);
-			await userToFollow.save();
-			await curUser.save();
-
-			response.send(success(200, "User unfollowed"));
 		} else {
 			//not followed
 
 			userToFollow.followers.push(curUserId);
-			curUser.followings.push(userToFollow);
-			await userToFollow.save();
-			await curUser.save();
-			response.send(success(200, "User followed"));
+			curUser.followings.push(userIdToFollow);
 		}
+
+		await userToFollow.save();
+		await curUser.save();
+
+		return response.send(success(200, { user: userToFollow }));
 	} catch (e) {
+		console.log("this error occurs on follow and  unfollow");
 		return response.send(error(500, e.message));
 	}
 };
 
-const getPostsOfFollowingController = async (request, response) => {
+const getFeedDataController = async (request, response) => {
 	//In this way we check all the posts and find which has the current user's followings. We fetch all of them
 	try {
 		const curUserId = request._id;
-		const curUser = await User.findById(curUserId);
+		const curUser = await User.findById(curUserId).populate("followings");
 
-		const posts = await Post.find({
+		const fullPosts = await Post.find({
 			owner: {
 				$in: curUser.followings,
 			},
+		}).populate("owner");
+
+		const posts = fullPosts
+			.map((item) => mapPostOutput(item, request._id))
+			.reverse();
+
+		curUser.posts = posts;
+		const followingsIds = curUser.followings.map((item) => item._id);
+		followingsIds.push(request._id);
+
+		const suggestions = await User.find({
+			_id: {
+				$nin: followingsIds,
+			},
 		});
 
-		return response.send(success(200, posts));
+		return response.send(
+			success(200, { ...curUser._doc, suggestions, posts })
+		);
 	} catch (e) {
 		return response.send(error(500, e.message));
 	}
@@ -191,8 +206,8 @@ const getUserProfileController = async (request, response) => {
 			},
 		});
 
-		const fullPost = user.posts;
-		const posts = fullPost
+		const fullPosts = user.posts;
+		const posts = fullPosts
 			.map((item) => mapPostOutput(item, request._id))
 			.reverse();
 
@@ -204,7 +219,7 @@ const getUserProfileController = async (request, response) => {
 
 module.exports = {
 	followAndUnfollowUserController,
-	getPostsOfFollowingController,
+	getFeedDataController,
 	getMyPostsController,
 	getUserPostsController,
 	deleteMyProfileController,

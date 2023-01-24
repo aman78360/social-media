@@ -4,7 +4,7 @@ import { BsCardImage } from "react-icons/bs";
 import "./CreatePost.scss";
 import { axiosClient } from "../../utils/axiosClient";
 import { useDispatch, useSelector } from "react-redux";
-import { setLoading } from "../../redux/slices/appConfigSlice";
+import { getUserProfile } from "../../redux/slices/postsSlice";
 function CreatePost() {
 	const [postImage, setPostImage] = useState("");
 	const [caption, setCaption] = useState("");
@@ -30,10 +30,15 @@ function CreatePost() {
 				postImage,
 			});
 			console.log("post done", result);
+
+			dispatch(
+				getUserProfile({
+					userId: myProfile?._id,
+				})
+			);
 		} catch (e) {
 			console.log("error related to post submit", e);
 		} finally {
-			dispatch(setLoading(false));
 			setCaption("");
 			setPostImage("");
 		}
@@ -54,11 +59,7 @@ function CreatePost() {
 				/>
 				{postImage && (
 					<div className="image-container">
-						<img
-							className="postImage"
-							src={postImage}
-							alt="Post Image"
-						/>
+						<img className="postImage" src={postImage} alt="" />
 					</div>
 				)}
 

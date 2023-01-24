@@ -26,11 +26,15 @@ const appConfigSlice = createSlice({
 	name: "appConfigSlice",
 	initialState: {
 		isLoading: false,
+		toastData: {},
 		myProfile: null,
 	},
 	reducers: {
 		setLoading: (state, action) => {
 			state.isLoading = action.payload;
+		},
+		showToast: (state, action) => {
+			state.toastData = action.payload;
 		},
 	},
 	extraReducers: (builder) => {
@@ -45,4 +49,4 @@ const appConfigSlice = createSlice({
 });
 
 export default appConfigSlice.reducer;
-export const { setLoading } = appConfigSlice.actions;
+export const { setLoading, showToast } = appConfigSlice.actions;

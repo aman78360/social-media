@@ -1,3 +1,5 @@
+var ta = require("time-ago");
+
 //This post will be the mongoDB object of a post
 const mapPostOutput = (post, userId) => {
 	return {
@@ -11,6 +13,7 @@ const mapPostOutput = (post, userId) => {
 		},
 		likesCount: post.likes.length,
 		isLiked: post.likes.includes(userId),
+		timeAgo: ta.ago(post.createdAt),
 	};
 };
 

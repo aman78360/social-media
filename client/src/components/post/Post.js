@@ -1,28 +1,55 @@
 import React from "react";
 import Avatar from "../avatar/Avatar";
 import "./Post.scss";
-import backgroundImg from "../../assets/background.jpg";
-import { AiOutlineHeart } from "react-icons/ai";
+import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
+import { useDispatch } from "react-redux";
+import { likeAndUnlikePost } from "../../redux/slices/postsSlice";
+import { useNavigate } from "react-router-dom";
+import { showToast } from "../../redux/slices/appConfigSlice";
+import { TOAST_SUCCESS } from "../../App";
 function Post({ post }) {
+	const navigate = useNavigate();
+	const dispatch = useDispatch();
+	async function handlePostLike() {
+		dispatch(
+			showToast({ type: TOAST_SUCCESS, message: "liked or unliked" })
+		);
+		dispatch(
+			likeAndUnlikePost({
+				postId: post._id,
+			})
+		);
+	}
+
 	return (
 		<div className="Post">
-			<div className="heading">
-				<Avatar />
-				<h4>Aman Gupta</h4>
+			<div
+				className="heading"
+				onClick={() => {
+					navigate(`/profile/${post?.owner?._id}`);
+				}}
+			>
+				<Avatar src={post?.owner?.avatar?.url} />
+				<h4>{post?.owner?.name}</h4>
 			</div>
 			<div className="content">
-				<img src={backgroundImg} alt="" />
+				<img src={post?.image?.url} alt="" />
 			</div>
 			<div className="footer">
-				<div className="like">
-					<AiOutlineHeart className="icon" />
-					<h4>4 likes</h4>
+				<div className="like" onClick={handlePostLike}>
+					{post?.isLiked ? (
+						<AiFillHeart
+							className="icon"
+							style={{ color: "red" }}
+						/>
+					) : (
+						<AiOutlineHeart className="icon" />
+					)}
+
+					<h4>{`${post?.likesCount} likes`}</h4>
 				</div>
-				<p className="caption">
-					Lorem ipsum dolor sit amet consectetur adipisicing elit.
-					Quam impedit autem consectetur fugit, libero iste?
-				</p>
-				<h6 className="time-ago">4 hours ago</h6>
+				<p className="caption">{post?.caption}</p>
+				<h6 className="time-ago">{post?.timeAgo}</h6>
 			</div>
 		</div>
 	);

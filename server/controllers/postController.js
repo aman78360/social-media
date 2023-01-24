@@ -1,6 +1,7 @@
 const { success, error } = require("../utils/responseWrapper");
 const Post = require("../models/Post");
 const User = require("../models/User");
+const { mapPostOutput } = require("../utils/Utils");
 const cloudinary = require("cloudinary").v2;
 
 const createPostController = async (request, response) => {
@@ -9,7 +10,7 @@ const createPostController = async (request, response) => {
 		const owner = request._id;
 
 		if (!caption || !postImage) {
-			response.send(error(400, "Caption is required"));
+			response.send(error(400, "Caption and post image is required"));
 		}
 
 		const cloudImage = await cloudinary.uploader.upload(postImage, {
@@ -29,7 +30,7 @@ const createPostController = async (request, response) => {
 		user.posts.push(post._id);
 		await user.save();
 
-		return response.send(success(201, post));
+		return response.send(success(200, { post }));
 	} catch (e) {
 		console.log(e);
 		return response.send(error(500, e.message));
@@ -41,7 +42,7 @@ const likeAndUnlikePostController = async (request, response) => {
 		const { postId } = request.body;
 		const curUserId = request._id;
 
-		const post = await Post.findById(postId);
+		const post = await Post.findById(postId).populate("owner");
 		if (!post) {
 			return response.send(error(404, "Post not found"));
 		}
@@ -49,13 +50,14 @@ const likeAndUnlikePostController = async (request, response) => {
 		if (post.likes.includes(curUserId)) {
 			const index = post.likes.indexOf(curUserId);
 			post.likes.splice(index, 1);
-			await post.save();
-			return response.send(success(200, "post unliked"));
 		} else {
 			post.likes.push(curUserId);
-			await post.save();
-			return response.send(success(200, "post liked"));
 		}
+
+		await post.save();
+		return response.send(
+			success(200, { post: mapPostOutput(post, request._id) })
+		);
 	} catch (e) {
 		return response.send(error(500, e.message));
 	}
