@@ -8,8 +8,9 @@ import {
 import store from "../redux/store";
 import { setLoading, showToast } from "../redux/slices/appConfigSlice";
 import { TOAST_FAILURE } from "../App";
+import baseURL from "../config";
 export const axiosClient = axios.create({
-	baseURL: process.env.REACT_APP_SERVER_BASE_URL,
+	baseURL: baseURL,
 	withCredentials: true,
 });
 
@@ -45,7 +46,7 @@ axiosClient.interceptors.response.use(
 				.create({
 					withCredentials: true,
 				})
-				.get(`${process.env.REACT_APP_SERVER_BASE_URL}/auth/refresh`);
+				.get(`${baseURL}/auth/refresh`);
 
 			if (response.status === "ok") {
 				setItem(KEY_ACCESS_TOKEN, response.result.accessToken);
