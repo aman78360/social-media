@@ -1,12 +1,16 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { TOAST_SUCCESS } from "../../App";
+import { showToast } from "../../redux/slices/appConfigSlice";
 import { axiosClient } from "../../utils/axiosClient";
 import "./Signup.scss";
 function Signup() {
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
-
+	const dispatch = useDispatch();
+	const navigate = useNavigate();
 	async function handleSubmit(event) {
 		event.preventDefault();
 		try {
@@ -15,7 +19,13 @@ function Signup() {
 				email,
 				password,
 			});
-			console.log(result);
+			dispatch(
+				showToast({
+					type: TOAST_SUCCESS,
+					message: "User Created  Successfully",
+				})
+			);
+			navigate("/login");
 		} catch (error) {
 			console.log(error);
 		}

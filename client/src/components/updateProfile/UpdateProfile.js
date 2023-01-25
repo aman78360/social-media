@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from "react";
 import "./UpdateProfile.scss";
 import { useDispatch, useSelector } from "react-redux";
-import { updateMyProfile } from "../../redux/slices/appConfigSlice";
+import { showToast, updateMyProfile } from "../../redux/slices/appConfigSlice";
 import dummyUserPng from "../../assets/user.png";
+import { axiosClient } from "../../utils/axiosClient";
+import { useNavigate } from "react-router-dom";
+import { KEY_ACCESS_TOKEN, removeItem } from "../../utils/localStorageManager";
+import { TOAST_SUCCESS } from "../../App";
 
 function UpdateProfile() {
 	const myProfile = useSelector((state) => state.appConfigReducer.myProfile);
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 	const [name, setName] = useState("");
 	const [bio, setBio] = useState("");
 	const [userImage, setUserImage] = useState("");
@@ -27,6 +32,23 @@ function UpdateProfile() {
 				console.log("image data", fileReader.result);
 			}
 		};
+	}
+
+	async function handleDelete() {
+		try {
+			await axiosClient.delete("/user/");
+			removeItem(KEY_ACCESS_TOKEN);
+			navigate("/login");
+			dispatch(
+				showToast({
+					type: TOAST_SUCCESS,
+					message: "User Deleted Successfully",
+				})
+			);
+		} catch (e) {
+			console.log("this is delete error");
+			console.log(e);
+		}
 	}
 
 	function handleSubmit(e) {
@@ -86,7 +108,10 @@ function UpdateProfile() {
 							Submit
 						</button>
 					</form>
-					<button className="btn-primary delete-account">
+					<button
+						className="btn-primary delete-account"
+						onClick={handleDelete}
+					>
 						Delete Account
 					</button>
 				</div>
