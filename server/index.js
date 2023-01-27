@@ -8,7 +8,6 @@ const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const cloudinary = require("cloudinary").v2;
-
 dotenv.config("./.env");
 
 // Configuration
@@ -17,6 +16,12 @@ cloudinary.config({
 	api_key: process.env.CLOUDINARY_API_KEY,
 	api_secret: process.env.CLOUDINARY_API_SECRET,
 });
+
+let origin = "http://localhost:3000";
+console.log("here env", process.env.NODE_ENV);
+if (process.env.NODE_ENV === "production") {
+	origin = process.env.CORS_ORIGIN;
+}
 
 const app = express();
 
@@ -27,7 +32,7 @@ app.use(cookieParser());
 app.use(
 	cors({
 		credentials: true,
-		origin: process.env.BASE_URL,
+		origin,
 	})
 );
 
@@ -42,8 +47,6 @@ app.get("/", (request, response) => {
 const PORT = process.env.PORT;
 dbConnect();
 
-if (process.env.PORT) {
-	app.listen(PORT, () => {
-		console.log("process listening on port " + PORT);
-	});
-}
+app.listen(PORT, () => {
+	console.log("process listening on port " + PORT);
+});
